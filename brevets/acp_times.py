@@ -7,11 +7,11 @@ and https://rusa.org/pages/rulesForRiders
 import arrow
 
 BREVETS_SPEED_TABLE = {
-   200  : {'minimum' : 15, 'maximum' : 34},
-   400  : {'minimum' : 15, 'maximum' : 32},
-   600  : {'minimum' : 15, 'maximum' : 30},
-   1000 : {'minimum' : 11.428, 'maximum' : 28},
-   1300 : {'minimum' : 13.333, 'maximum' : 26}
+   0    : {'minimum' : 15, 'maximum' : 34},
+   200  : {'minimum' : 15, 'maximum' : 32},
+   400  : {'minimum' : 15, 'maximum' : 30},
+   600  : {'minimum' : 11.428, 'maximum' : 28},
+   1000 : {'minimum' : 13.333, 'maximum' : 26}
 }
 
 HARDCODED_TIME_LIMITS = {
@@ -106,11 +106,17 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
    if control_dist_km >= brevet_dist_km: control_dist_km = brevet_dist_km
 
    # calculate time offset standard method with maximum speed
-   max_speed = maximum_speed(control_dist_km)
-   time_hours = control_dist_km / max_speed
-   fractional_part = time_hours % 1
-   minute_offset = round(fractional_part * 60)
-   hour_offset = time_hours // 1
+   hour_offset = 0
+   minute_offset = 0
+   for control_cutoff in reversed(BREVETS_SPEED_TABLE):
+      cuttoff_diff = control_dist_km - control_cutoff
+      if cuttoff_diff > 0:
+         max_speed = BREVETS_SPEED_TABLE[control_cutoff]['maximum']
+         time_hours = cuttoff_diff / max_speed
+         fractional_part = time_hours % 1
+         minute_offset += round(fractional_part * 60)
+         hour_offset += (time_hours // 1)
+         control_dist_km -= cuttoff_diff
 
    return brevet_start_time.shift(hours=hour_offset, minutes=minute_offset)
 
@@ -132,19 +138,22 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
       time_adjustment = HARDCODED_TIME_LIMITS[brevet_dist_km]
       return brevet_start_time.shift(hours=time_adjustment['hours'], 
                                      minutes=time_adjustment['minutes'])
+
+   if control_dist_km == 0: # by rule the closing time of 0 is +1hr
+      return brevet_start_time.shift(hours=1)
    
    # calculate time offset standard method with minimum speed
-   min_speed = minimum_speed(control_dist_km)
-   time_hours = control_dist_km / min_speed
-   fractional_part = time_hours % 1
-   minute_offset = round(fractional_part * 60)
-   hour_offset = time_hours // 1
+   hour_offset = 0
+   minute_offset = 0
+   for control_cutoff in reversed(BREVETS_SPEED_TABLE):
+      cuttoff_diff = control_dist_km - control_cutoff
+      if cuttoff_diff > 0:
+         min_speed = BREVETS_SPEED_TABLE[control_cutoff]['minimum']
+         time_hours = cuttoff_diff / min_speed
+         fractional_part = time_hours % 1
+         minute_offset += round(fractional_part * 60)
+         hour_offset += (time_hours // 1)
+         control_dist_km -= cuttoff_diff
 
    return brevet_start_time.shift(hours=hour_offset, minutes=minute_offset)
 
-if __name__ == "__main__":
-   tests = [200, 10, 400, 540, 650, 1000, 1202]
-   for e in tests:
-      print('test for', e)
-      print('minimum', minimum_speed(e))
-      print('maximum', maximum_speed(e))
