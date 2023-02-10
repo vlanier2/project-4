@@ -15,11 +15,11 @@ BREVETS_SPEED_TABLE = {
 }
 
 HARDCODED_TIME_LIMITS = {
-   200  : "13:30",
-   300  : "20:00",
-   400  : "27:00",
-   600  : "40:00",
-   1000 : "75:00"
+   200  : {"hours" : 13, "minutes" : 30},
+   300  : {"hours" : 20, "minutes" : 0},
+   400  : {"hours" : 27, "minutes" : 0},
+   600  : {"hours" : 40, "minutes" : 0},
+   1000 : {"hours" : 75, "minutes" : 0}
 }
 
 def get_speed(control_location_km, maximum_or_minimum):
@@ -91,33 +91,56 @@ def get_times_from_list(control_dists_km, brevet_dist_km, brevet_start_time):
 #  same arguments.
 
 def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
-    """
-    Args:
-       control_dist_km:  number, control distance in kilometers
-       brevet_dist_km: number, nominal distance of the brevet
-           in kilometers, which must be one of 200, 300, 400, 600,
-           or 1000 (the only official ACP brevet distances)
-       brevet_start_time:  An arrow object
-    Returns:
-       An arrow object indicating the control open time.
-       This will be in the same time zone as the brevet start time.
-    """
-    return arrow.now()
+   """
+   Args:
+      control_dist_km:  number, control distance in kilometers
+      brevet_dist_km: number, nominal distance of the brevet
+         in kilometers, which must be one of 200, 300, 400, 600,
+         or 1000 (the only official ACP brevet distances)
+      brevet_start_time:  An arrow object
+   Returns:
+      An arrow object indicating the control open time.
+      This will be in the same time zone as the brevet start time.
+   """
+   # consider opening time adjustment from rulebook
+   if control_dist_km >= brevet_dist_km: control_dist_km = brevet_dist_km
+
+   # calculate time offset standard method with maximum speed
+   max_speed = maximum_speed(control_dist_km)
+   time_hours = control_dist_km / max_speed
+   fractional_part = time_hours % 1
+   minute_offset = round(fractional_part * 60)
+   hour_offset = time_hours // 1
+
+   return brevet_start_time.shift(hours=hour_offset, minutes=minute_offset)
 
 
 def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
-    """
-    Args:
-       control_dist_km:  number, control distance in kilometers
-          brevet_dist_km: number, nominal distance of the brevet
-          in kilometers, which must be one of 200, 300, 400, 600, or 1000
-          (the only official ACP brevet distances)
-       brevet_start_time:  An arrow object
-    Returns:
-       An arrow object indicating the control close time.
-       This will be in the same time zone as the brevet start time.
-    """
-    return arrow.now()
+   """
+   Args:
+      control_dist_km:  number, control distance in kilometers
+         brevet_dist_km: number, nominal distance of the brevet
+         in kilometers, which must be one of 200, 300, 400, 600, or 1000
+         (the only official ACP brevet distances)
+      brevet_start_time:  An arrow object
+   Returns:
+      An arrow object indicating the control close time.
+      This will be in the same time zone as the brevet start time.
+   """
+   # consider hard-coded closing times from rulebook
+   if control_dist_km >= brevet_dist_km:
+      time_adjustment = HARDCODED_TIME_LIMITS[brevet_dist_km]
+      return brevet_start_time.shift(hours=time_adjustment['hours'], 
+                                     minutes=time_adjustment['minutes'])
+   
+   # calculate time offset standard method with minimum speed
+   min_speed = minimum_speed(control_dist_km)
+   time_hours = control_dist_km / min_speed
+   fractional_part = time_hours % 1
+   minute_offset = round(fractional_part * 60)
+   hour_offset = time_hours // 1
+
+   return brevet_start_time.shift(hours=hour_offset, minutes=minute_offset)
 
 if __name__ == "__main__":
    tests = [200, 10, 400, 540, 650, 1000, 1202]
