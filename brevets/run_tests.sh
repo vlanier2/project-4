@@ -2,5 +2,5 @@
 
 for t in tests/*.py
 do
-    nosetests --nologcapture $t
+    nosetests $t
 done
