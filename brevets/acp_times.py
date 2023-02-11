@@ -6,6 +6,8 @@ and https://rusa.org/pages/rulesForRiders
 """
 import arrow
 
+### TABLES
+
 BREVETS_SPEED_TABLE = {
    0    : {'minimum' : 15, 'maximum' : 34},
    200  : {'minimum' : 15, 'maximum' : 32},
@@ -21,6 +23,8 @@ HARDCODED_TIME_LIMITS = {
    600  : {"hours" : 40, "minutes" : 0},
    1000 : {"hours" : 75, "minutes" : 0}
 }
+
+### HELPER FUNCTIONS
 
 def get_speed(control_location_km, maximum_or_minimum):
    """
@@ -141,6 +145,13 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
 
    if control_dist_km == 0: # by rule the closing time of 0 is +1hr
       return brevet_start_time.shift(hours=1)
+
+   # consider closing time relaxation for controls within 60km of start
+   if control_dist_km <= 60:
+      time_hours = control_dist_km / 20
+      minute_offset = round((time_hours % 1) * 60)
+      hour_offset = 1 + (time_hours // 1)
+      return brevet_start_time.shift(hours=hour_offset, minutes=minute_offset)
    
    # calculate time offset standard method with minimum speed
    hour_offset = 0
