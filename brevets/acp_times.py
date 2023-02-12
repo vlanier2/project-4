@@ -106,6 +106,9 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
       An arrow object indicating the control open time.
       This will be in the same time zone as the brevet start time.
    """
+
+   control_dist_km = round(control_dist_km)
+
    # consider opening time adjustment from rulebook
    if control_dist_km >= brevet_dist_km: control_dist_km = brevet_dist_km
 
@@ -118,11 +121,13 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
          max_speed = BREVETS_SPEED_TABLE[control_cutoff]['maximum']
          time_hours = cuttoff_diff / max_speed
          fractional_part = time_hours % 1
-         minute_offset += round(fractional_part * 60)
+         minute_offset += (fractional_part * 60)
          hour_offset += (time_hours // 1)
          control_dist_km -= cuttoff_diff
 
-   return brevet_start_time.shift(hours=hour_offset, minutes=minute_offset)
+         print(cuttoff_diff, control_dist_km, hour_offset, minute_offset)
+
+   return brevet_start_time.shift(hours=hour_offset, minutes=round(minute_offset))
 
 
 def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
@@ -137,6 +142,9 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
       An arrow object indicating the control close time.
       This will be in the same time zone as the brevet start time.
    """
+
+   control_dist_km = round(control_dist_km)
+
    # consider hard-coded closing times from rulebook
    if control_dist_km >= brevet_dist_km:
       time_adjustment = HARDCODED_TIME_LIMITS[brevet_dist_km]
@@ -162,9 +170,9 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
          min_speed = BREVETS_SPEED_TABLE[control_cutoff]['minimum']
          time_hours = cuttoff_diff / min_speed
          fractional_part = time_hours % 1
-         minute_offset += round(fractional_part * 60)
+         minute_offset += (fractional_part * 60)
          hour_offset += (time_hours // 1)
          control_dist_km -= cuttoff_diff
 
-   return brevet_start_time.shift(hours=hour_offset, minutes=minute_offset)
+   return brevet_start_time.shift(hours=hour_offset, minutes=round(minute_offset))
 
