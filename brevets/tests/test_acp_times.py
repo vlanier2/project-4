@@ -183,6 +183,47 @@ def test_oddity_control_near_start_600km_brevet():
         assert(times[control]['close_time'] == truth_close[control])
 
 #####
+# FRACTIONAL KM TEST
+#####
+
+def test_fractional_km_300km_brevet():
+    """
+    Tests a 300km brevet with controls at
+    0, 34.556, 242.41, 242.89, 309.22, 309.99
+    """
+    control_locations = [0, 34.556, 242.41, 242.89, 309.22, 309.99]
+
+    times = acp_times.get_times_from_list(
+        control_locations, 
+        300, 
+        arrow.get('2000-01-01 00:00:00', 'YYYY-MM-DD HH:mm:ss'))
+
+    truth_open = {
+        0       : arrow.get('2000-01-01 00:00:00', 'YYYY-MM-DD HH:mm:ss'),
+        34.556  : arrow.get('2000-01-01 01:02:00', 'YYYY-MM-DD HH:mm:ss'),
+        242.41  : arrow.get('2000-01-01 07:12:00', 'YYYY-MM-DD HH:mm:ss'),
+        242.89  : arrow.get('2000-01-01 07:14:00', 'YYYY-MM-DD HH:mm:ss'),
+        309.22  : arrow.get('2000-01-01 09:00:00', 'YYYY-MM-DD HH:mm:ss'),
+        309.99  : arrow.get('2000-01-01 09:00:00', 'YYYY-MM-DD HH:mm:ss')
+    }
+
+    truth_close = {
+        0       : arrow.get('2000-01-01 01:00:00', 'YYYY-MM-DD HH:mm:ss'),
+        34.556  : arrow.get('2000-01-01 02:45:00', 'YYYY-MM-DD HH:mm:ss'),
+        242.41  : arrow.get('2000-01-01 16:08:00', 'YYYY-MM-DD HH:mm:ss'),
+        242.89  : arrow.get('2000-01-01 16:12:00', 'YYYY-MM-DD HH:mm:ss'),
+        309.22  : arrow.get('2000-01-01 20:00:00', 'YYYY-MM-DD HH:mm:ss'),
+        309.99  : arrow.get('2000-01-01 20:00:00', 'YYYY-MM-DD HH:mm:ss')
+    }
+
+    for control in times:
+        log.debug(f"test for {control}")
+        log.debug(f"{times[control]['open_time']} == {truth_open[control]}")
+        assert(times[control]['open_time'] == truth_open[control])
+        log.debug(f"{times[control]['close_time']} == {truth_close[control]}")
+        assert(times[control]['close_time'] == truth_close[control])
+
+#####
 # PRESSURE TEST - CONTROLS AT VARIED TIMES
 # DIFFERENT START TIME - INCLUDES ODDITY
 #####
