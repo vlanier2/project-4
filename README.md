@@ -1,7 +1,5 @@
 # UOCIS322 - Project 4 
 
-NOTE: This time, you should outline the application, the algorithm, and how to use start (docker instructions, web app instructions). Make sure you're thorough, otherwise you may not get all the points.
-
 NAME: Vincent Lanier
 
 CONTACT: vlanier@uoregon.edu
@@ -21,17 +19,14 @@ This calculation produces a time in hours. To convert into hours and minutes we 
 
 The table below gives the minimum and maximum speeds for ACP brevets.
 
-Control location (km)	  Minimum Speed (km/hr)	  Maximum Speed (km/hr)
+| Control location (km) | Minimum Speed (km/hr) | Maximum Speed (km/hr) |
+| --- | --- | --- |
+| 0 - 200 | 15 | 34 |
+| 200 - 400 | 15 | 32 |
+| 400 - 600 | 15 | 30 |
+| 600 - 1000 | 11.428 | 28 |
+| 1000 - 1300 | 13.333 | 26 |
 
-0 - 200	                        15	                    34
-
-200 - 400	                      15	                    32
-
-400 - 600	                      15	                    30
-
-600 - 1000	                    11.428	                28
-
-1000 - 1300	                    13.333	                26
 
 The calculator converts all inputs expressed in units of miles to kilometers and truncates the result to the nearest kilometer before being used in calculations. Kilometer values are rounded to the nearest kilometer before being used in calculations. Times are rounded to the nearest minute after all calculations are complete.
 
