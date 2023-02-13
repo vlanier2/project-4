@@ -40,7 +40,7 @@ Calculation of control times that fall beyond 200km is more complex. The followi
 
 The closing time for the starting point (at 0km) is one hour after the official start.
 
-Overall time limits vary for each brevet are: (in hours and minutes, HH:MM) 13:30 for 200 KM, 20:00 for 300 KM, 27:00 for 400 KM, 40:00 for 600 KM, and 75:00 for 1000 KM. These are used as closing times for the final control point regardless if the final control is located beyond the total brevet distance. Final control points are allowed by rule to be 20% further than the total brevet distance.
+Overall time limits for each brevet are: (in hours and minutes, HH:MM) 13:30 for 200 KM, 20:00 for 300 KM, 27:00 for 400 KM, 40:00 for 600 KM, and 75:00 for 1000 KM. These are used as closing times for the final control point regardless if the final control is located beyond the total brevet distance. Final control points are allowed by rule to be 20% further than the total brevet distance.
 
 The closing time for a control within the first 60km is based on 20 km/hr, plus 1 hour. This is to ensure points within 60km do not close during the open period of the start at 0km.
 
@@ -72,7 +72,7 @@ python3 flast_brevets.py
 
 ## Usage
 
-With the container running, navigate to localhost:<port> to oepn the brevet checkpoint spreadsheet. Select a total brevet distance and a start date and time at the top of the page. Then enter checkpoint distances in miles or kilometers. The times for each checkpoint will fill in response to a new kilometer distance being entered.
+With the container running, navigate to localhost:<port> to open the brevet checkpoint spreadsheet. Select a total brevet distance and a start date and time at the top of the page. Then enter checkpoint distances in miles or kilometers. The times for each checkpoint will fill in response to a new kilometer distance being entered.
 
 ## Testing
 
